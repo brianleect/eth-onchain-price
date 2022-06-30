@@ -6,11 +6,11 @@ Access to historical price of ETH completely on-chain stored in a SQLite DB that
 ## Installation
 1. ``git clone https://github.com/brianleect/eth-onchain-price``
 2. ``npm install package.json``
-3. Update config.js with relevant params (WS Provider, rate limit, location to store DB)
-4. ``node index.js``
+3. Update ``sample.config.js`` with relevant fields ``provider`` , ``DB_PATH`` ..
+4. Rename ``sample.config.js`` to ``config.js``
+5. ``node index.js``
 
-## Usage / Elaborations
-1. First run retrieving from ~2017 will take longer.
-2. After first run, simply leave the process running for it and it'll continuously retrieve price onchain for ETH on a per block basis.
-3. If process is stopped, it'll continue where it previously left off.
-
+## Elaboration on quirks
+1. Start block for default initialization is ``10100000``
+2. Ideally running on a local node we can set rate limit to 500-600 which should be significantly faster.
+3. Alternatively, download recently synced DB and continue from there. Alchemy limit of 10/s should be more than sufficient to keep up.
