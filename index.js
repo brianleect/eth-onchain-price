@@ -60,7 +60,7 @@ async function cacheAllUsdBlocks() {
     var reserveCalls = []
     var latestSavedBlock = lastRetrievedBlock.price // Note that its not actually price
     var intervalsCalled = 0
-    for (let i = lastRetrievedBlock.price; i < latestBlock; i++) {
+    for (let i = lastRetrievedBlock.price + 1; i < latestBlock; i++) {
         await ratelimitEthCall()
         const reserveCall = getEthPrice(i)
 
