@@ -1,5 +1,5 @@
-const { RateLimit } = require('async-sema');
-const { RATELIMIT_CALL, PROVIDER } = require('./config');
+
+const { PROVIDER } = require('./config');
 const Web3 = require('web3');
 const web3 = new Web3(PROVIDER)
 
