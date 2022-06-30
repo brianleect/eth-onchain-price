@@ -1,0 +1,26 @@
+{
+  "name": "eth-onchain-price",
+  "version": "1.0.0",
+  "description": "Store price of ETHUSDT on chain in sqlite DB to be easily accessed",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianleect/eth-onchain-price.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brianleect/eth-onchain-price/issues"
+  },
+  "homepage": "https://github.com/brianleect/eth-onchain-price#readme",
+  "dependencies": {
+    "async-sema": "^3.1.1",
+    "package.json": "^2.0.1",
+    "sequelize": "^6.21.2",
+    "sqlite3": "^5.0.8",
+    "web3": "^1.7.4"
+  }
+}
