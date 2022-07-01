@@ -1,5 +1,5 @@
 
-const { Sequelize, Op, Model, DataTypes } = require("sequelize");
+const { Sequelize, Op, Model, DataTypes, QueryTypes } = require("sequelize");
 const { RateLimit } = require('async-sema');
 const { RATELIMIT_CALL, DB_PATH, PROVIDER } = require('./config');
 const { getEthPrice } = require("./utils");
@@ -46,11 +46,11 @@ async function cacheAllUsdBlocks() {
     var getMaxBlockQuery = await sequelize.query('SELECT MAX(block) FROM ethPrices', { type: QueryTypes.SELECT })
     var lastRetrievedBlock = getMaxBlockQuery[0]['MAX(block)'] ? getMaxBlockQuery[0]['MAX(block)'] : 10100000
     var latestBlock = await web3.eth.getBlockNumber()
-    console.log(`(cacheEthUsd) Missing: ${latestBlock - lastRetrievedBlock.price} / Last: ${lastRetrievedBlock.price} / Latest: ${latestBlock}`)
+    console.log(`(cacheEthUsd) Missing: ${latestBlock - lastRetrievedBlock} / Last: ${lastRetrievedBlock} / Latest: ${latestBlock}`)
 
     var reserveCalls = []
     var latestSavedBlock = lastRetrievedBlock
-    for (let i = lastRetrievedBlock.price + 1; i < latestBlock; i++) {
+    for (let i = lastRetrievedBlock + 1; i < latestBlock; i++) {
         await ratelimitEthCall()
         const reserveCall = getEthPrice(i)
 
