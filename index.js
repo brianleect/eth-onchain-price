@@ -10,7 +10,8 @@ const ratelimitEthCall = new RateLimit(RATELIMIT_CALL, { timeUnit: 1000, uniform
 
 const sequelize = new Sequelize('database', 'username', null, {
     dialect: 'sqlite',
-    storage: DB_PATH
+    storage: DB_PATH,
+    logging: false
 })
 
 const ethPrice = sequelize.define('ethPrice', {
@@ -40,26 +41,15 @@ const ethPrice = sequelize.define('ethPrice', {
 })();
 
 async function cacheAllUsdBlocks() {
-
+    console.time('(TIME)(CacheUsd)')
     // Note that we store latest block retrieved at blockNumber -1 for convenience
-    var lastRetrievedBlock = await ethPrice.findByPk('-1')
-    if (lastRetrievedBlock == null) {
-        console.log('Unable to find last retrieved block, intitializing to 10100000 (DEFAULT)')
-        lastRetrievedBlock = await ethPrice.create({ block: -1, price: 10100000 })
-    }
-    // Tmp fix to clear 
-    else if (lastRetrievedBlock.price == 10100000) {
-        await ethPrice.sync({ force: true })
-        console.log('(FORCE CLEAN) Found start default of 10100000 to prevent conflict')
-        lastRetrievedBlock = await ethPrice.create({ block: -1, price: 10100000 })
-    }
-
+    var getMaxBlockQuery = await sequelize.query('SELECT MAX(block) FROM ethPrices', { type: QueryTypes.SELECT })
+    var lastRetrievedBlock = getMaxBlockQuery[0]['MAX(block)'] ? getMaxBlockQuery[0]['MAX(block)'] : 10100000
     var latestBlock = await web3.eth.getBlockNumber()
     console.log(`(cacheEthUsd) Missing: ${latestBlock - lastRetrievedBlock.price} / Last: ${lastRetrievedBlock.price} / Latest: ${latestBlock}`)
 
     var reserveCalls = []
-    var latestSavedBlock = lastRetrievedBlock.price // Note that its not actually price
-    var intervalsCalled = 0
+    var latestSavedBlock = lastRetrievedBlock
     for (let i = lastRetrievedBlock.price + 1; i < latestBlock; i++) {
         await ratelimitEthCall()
         const reserveCall = getEthPrice(i)
@@ -79,11 +69,8 @@ async function cacheAllUsdBlocks() {
     }
 
     await Promise.allSettled(reserveCalls)
-    console.log('(cacheEthUsd) Intervals called:', intervalsCalled, '/ Last saved:', latestSavedBlock)
-
-    // Note possible error as we should await first to complete all eth_calls ideally
-    lastRetrievedBlock.block = latestSavedBlock // Update last retrieved block and proceed to save
-    await lastRetrievedBlock.save()
+    console.log('(cacheEthUsd) Last saved:', latestSavedBlock)
+    console.timeEnd('(TIME)(CacheUsd)')
 
     // Recursively call set time out every 10s
     setTimeout(cacheAllUsdBlocks, 10000)
