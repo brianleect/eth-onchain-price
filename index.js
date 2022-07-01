@@ -1,7 +1,7 @@
 
 const { Sequelize, Op, Model, DataTypes, QueryTypes } = require("sequelize");
 const { RateLimit } = require('async-sema');
-const { RATELIMIT_CALL, DB_PATH, PROVIDER } = require('./config');
+const { RATELIMIT_CALL, DB_PATH, PROVIDER, ENABLE_SQL_LOGS } = require('./config');
 const { getEthPrice } = require("./utils");
 const Web3 = require('web3');
 const web3 = new Web3(PROVIDER)
@@ -11,7 +11,7 @@ const ratelimitEthCall = new RateLimit(RATELIMIT_CALL, { timeUnit: 1000, uniform
 const sequelize = new Sequelize('database', 'username', null, {
     dialect: 'sqlite',
     storage: DB_PATH,
-    logging: false
+    logging: ENABLE_SQL_LOGS
 })
 
 const ethPrice = sequelize.define('ethPrice', {
