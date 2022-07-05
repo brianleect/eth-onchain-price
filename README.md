@@ -11,6 +11,6 @@ Access to historical price of ETH completely on-chain stored in a SQLite DB that
 5. ``node index.js``
 
 ## Elaboration on quirks
-1. Start block for default initialization is ``10100000``
+1. Start block for default initialization is ``10100000`` (Uniswap V2 pool for ETHUSD was launched around then)
 2. Ideally running on a local node we can set rate limit to 500-600 which should be significantly faster.
 3. Alternatively, download recently synced DB and continue from there. Alchemy limit of 10/s should be more than sufficient to keep up.
